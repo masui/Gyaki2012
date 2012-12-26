@@ -1,0 +1,192 @@
+<html>
+  <head>
+    <!-- meta name="viewport" content="width=320, initial-scale=1.0, user-scalable=no, maximum-scale=2.0, minimum-scale=1.0, "-->
+    <!--meta name="viewport" content="initial-scale=1.0, user-scalable=no"-->
+    <meta name="viewport" content="width=device-width, target-densitydpi=device-dpi, user-scalable=no">
+    <!--meta name="viewport" content="width=800, user-scalable=no, initial-scale=1.0"-->
+    <style>
+      body {
+        background: whitesmoke;
+        margin: 0;
+        padding: 0;
+      }
+      canvas {
+        background: white;
+      }
+    </style>
+  </head>
+  <body>
+    <!--canvas id='cvs' width=500 height=500></canvas-->
+    <input id='upload' type='button' value="upload" style="position:absolute;width:70;height:70;visibility:hidden;">
+    <img id="line1" src="line1.png" style="position:absolute;visibility:hidden;">
+    <img id="line2" src="line2.png" style="position:absolute;visibility:hidden;">
+    <img id="line3" src="line3.png" style="position:absolute;visibility:hidden;">
+    <img id="color1" src="color1.png" style="position:absolute;visibility:hidden;">
+    <img id="color2" src="color2.png" style="position:absolute;visibility:hidden;">
+    <img id="color3" src="color3.png" style="position:absolute;visibility:hidden;">
+
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+    <script charset="utf-8">
+      $(function () {
+
+      var width = screen.width;
+      var height = screen.height;
+
+      $('#upload').css('top',width+20);
+      $('#upload').css('left',20);
+      $('#upload').css('visibility','visible');
+
+      $('#line1').css('top',width+20);
+      $('#line1').css('left',20+150+90*0);
+      $('#line1').css('width',70);
+      $('#line1').css('height',70);
+      $('#line1').css('visibility','visible');
+      $('#line2').css('top',width+20);
+      $('#line2').css('left',20+150+90*1);
+      $('#line2').css('width',70);
+      $('#line2').css('height',70);
+      $('#line2').css('visibility','visible');
+      $('#line3').css('top',width+20);
+      $('#line3').css('left',20+150+90*2);
+      $('#line3').css('width',70);
+      $('#line3').css('height',70);
+      $('#line3').css('visibility','visible');
+
+      $('#color1').css('top',width+20);
+      $('#color1').css('left',20+150+40+90*3);
+      $('#color1').css('width',70);
+      $('#color1').css('height',70);
+      $('#color1').css('visibility','visible');
+      $('#color2').css('top',width+20);
+      $('#color2').css('left',20+150+40+90*4);
+      $('#color2').css('width',70);
+      $('#color2').css('height',70);
+      $('#color2').css('visibility','visible');
+      $('#color3').css('top',width+20);
+      $('#color3').css('left',20+150+40+90*5);
+      $('#color3').css('width',70);
+      $('#color3').css('height',70);
+      $('#color3').css('visibility','visible');
+
+      // alert(window.orientation); // tabletのとき0, 90, 180, など
+
+      var id = '6de03da71906813d48a9952f410df4c1'; // masui
+      var pair = location.search.substring(1).split('&');
+      for(var i=0;pair[i];i++) {
+        var kv = pair[i].split('=');
+        if(kv[0] == 'id') id = kv[1];
+      }
+
+      var canvas = document.createElement('canvas');
+      canvas.setAttribute('width',width);
+      canvas.setAttribute('height',width);
+      document.body.appendChild(canvas);
+      var canvasX, canvasY;
+      canvasX = canvas.offsetLeft;
+      canvasY = canvas.offsetTop;
+
+      var context = canvas.getContext('2d');
+      var crd = {cur:{x:0,y:0},pre:{x:0,y:0}};
+      var drawing = false;
+
+      canvas.style.width = width;
+      canvas.style.height = width;
+      window.devicePixelRatio = 1.0;
+      //alert(screen.width);
+      //alert(screen.height);
+
+      context.strokeStyle = '#000';
+      context.lineWidth = 15;
+      context.lineJoin = "round";
+      context.lineCap = "round";
+
+      context.fillStyle = '#FFF';
+      context.fillRect(0,0,width,width);
+
+      $('#line1').on('click', function(e){ context.lineWidth = 2; });
+      $('#line2').on('click', function(e){ context.lineWidth = 15; });
+      $('#line3').on('click', function(e){ context.lineWidth = 30; });
+      $('#color1').on('click', function(e){ context.strokeStyle = 'rgb(255, 255, 255)'; });
+      $('#color2').on('click', function(e){ context.strokeStyle = 'rgb(128, 128, 128)'; });
+      $('#color3').on('click', function(e){ context.strokeStyle = 'rgb(0, 0, 0)'; });
+
+      $('canvas').on('touchmove mousemove', function (e) {
+        e.preventDefault();
+        if ('touchmove' == e.type) {
+          var x, y;
+            x = e.originalEvent.changedTouches[0].pageX;
+            y = e.originalEvent.changedTouches[0].pageY;
+          } else {
+            x = e.pageX;
+            y = e.pageY;
+        }
+        x -= canvasX;
+        y -= canvasY;
+
+      if(x == width/2 && y == width/2) return; //GalaxyNexusのバグ回避
+
+       //$('#xxx').text(x);
+        if (drawing) {
+          context.beginPath();
+          context.lineJoin = "round"; // 何故かここいるにいる
+          context.lineCap = "round";
+          context.moveTo(crd.pre.x, crd.pre.y);
+          crd.cur.x = x;
+          crd.cur.y = y;
+          context.lineTo(crd.cur.x, crd.cur.y);
+          crd.pre.x = crd.cur.x;
+          crd.pre.y = crd.cur.y;
+          context.stroke();
+          context.closePath();
+
+          } else {
+          crd.pre.x = crd.cur.x;
+          crd.pre.y = crd.cur.y;
+          crd.cur.x = x;
+          crd.cur.y = y;
+        }
+      });
+
+      $('canvas').on('touchstart mousedown', function (e) {
+        e.preventDefault();
+        var x, y;
+        if ('touchstart' == e.type) {
+          x = e.originalEvent.changedTouches[0].pageX;
+          y = e.originalEvent.changedTouches[0].pageY;
+        } else {
+          x = e.pageX;
+          y = e.pageY;
+        }
+        x -= canvasX;
+        y -= canvasY;
+        crd.pre.x = x;
+        crd.pre.y = y;
+        drawing = true;
+      });
+
+      $('canvas').on('touchend mouseup', function (event) {
+        event.preventDefault();
+        drawing = false;
+      });
+
+      $('#upload').on('click', function(event){
+         imagedata = canvas.toDataURL();
+         // id = '6de03da71906813d48a9952f410df4c1';
+         $.ajax({
+           type: 'POST',
+           url: 'upload.cgi',
+           // crossDomain: true,
+           data: {
+             data: imagedata,
+             id: id
+           },
+           success: function(data, textStatus, jqXHR ) {
+              location.href = data;
+              // window.open(data,"Gyazo");
+           },
+         });
+       });
+    });
+  </script>
+</body>
+</html>
