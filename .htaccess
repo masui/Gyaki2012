@@ -1,0 +1,6 @@
+Options +ExecCGI
+Options +Includes
+Options +FollowSymLinks
+
+RewriteEngine on
+RewriteRule ^([^\.][^\.]*)$ draw.html?id=$1
