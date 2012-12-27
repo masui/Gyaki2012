@@ -71,11 +71,12 @@
       // alert(window.orientation); // tabletのとき0, 90, 180, など
 
       var id = '6de03da71906813d48a9952f410df4c1'; // masui
-      var pair = location.search.substring(1).split('&');
-      for(var i=0;pair[i];i++) {
-        var kv = pair[i].split('=');
-        if(kv[0] == 'id') id = kv[1];
-      }
+      //var pair = location.search.substring(1).split('&');
+      //for(var i=0;pair[i];i++) {
+      //  var kv = pair[i].split('=');
+      //  if(kv[0] == 'id') id = kv[1];
+      //}
+      id = location.href.substring(17);
 
       var canvas = document.createElement('canvas');
       canvas.setAttribute('width',width);
