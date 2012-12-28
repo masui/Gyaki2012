@@ -28,20 +28,21 @@
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
     <script charset="utf-8">
     function browserWidth(){  
-      if(window.innerWidth){ return window.innerWidth; }  
-      else if(document.body){ return document.body.clientWidth; }  
-      return 0;  
-    }  
-    function browserHeight(){  
-      if(window.innerHeight){ return window.innerHeight; }  
-      else if(document.body){ return document.body.clientHeight; }  
-      return 0;  
-    }  
+      if(window.innerWidth){ return window.innerWidth; }
+      else if(document.body){ return document.body.clientWidth; }
+      return 0;
+    }
+
+    function browserHeight(){
+      if(window.innerHeight){ return window.innerHeight; }
+      else if(document.body){ return document.body.clientHeight; }
+      return 0;
+    }
 
       $(function () {
 
       var width = browserWidth();
-      var height = screen.height;
+      var height = browserHeight();
 
       $('#upload').css('top',width+20);
       $('#upload').css('left',20);
