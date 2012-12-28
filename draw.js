@@ -15,7 +15,8 @@ var strokeStyle;
 var crd;
 var drawing;
 
-var gyazoID;
+var gyazoUserID;
+var gyazoImageID;
 
 var browserWidth = function(){  
     if(window.innerWidth){ return window.innerWidth; }  
@@ -36,6 +37,14 @@ var resize = function(){
     height = browserHeight();
     canvasSize = width;
     if(height < canvasSize) canvasSize = height;
+
+    if(gyazoImageID){
+	var img = new Image();
+	img.src = "gyazodata.cgi?id=" + gyazoImageID; // + "?" + new Date().getTime();
+	img.onload = function() {
+	    context.drawImage(img, 0, 0);
+	}
+    }
 
     var orientation = 'portrait';
 
@@ -148,8 +157,16 @@ var initElements = function(){
 var initParams = function(){
     window.devicePixelRatio = 1.0;
 
-    gyazoID = '6de03da71906813d48a9952f410df4c1'; // masui
-    gyazoID = location.href.substring(17);
+//    gyazoUserID = '6de03da71906813d48a9952f410df4c1'; // masui
+
+    gyazoUserID = location.href.substring(17);
+    gyazoImageID = null;
+    gyazoUserID = '6de03da71906813d48a9952f410df4c1'; // masui
+    gyazoUserID = location.href.substring(17);
+    if(a = gyazoUserID.match(/^(.*)-(.*)$/)){
+	gyazoUserID = a[1];
+	gyazoImageID = a[2];
+    }
 
     canvasX = canvas.offset()["left"];
     canvasY = canvas.offset()["top"];
@@ -160,8 +177,6 @@ var initParams = function(){
     strokeStyle = "#000";
 
     context = canvas[0].getContext('2d');
-    //    context.fillStyle = '#FFF';
-    //    context.fillRect(0,0,width,width);
     
     lineButton[0].on('click', function(e){ lineWidth = 3; });
     lineButton[1].on('click', function(e){ lineWidth = 15; });
@@ -234,13 +249,15 @@ var initCallbacks = function(){
     });
     
     uploadButton.on('click', function(event){
+	var imagedata = canvas[0].toDataURL(); // Gyazoからの画像を使ってるとセキュリティエラーになることあり
+	// http://paulownia.hatenablog.com/entry/20100602/1275493299
 	$.ajax({
             type: 'POST',
             url: 'upload.cgi',
             // crossDomain: true,
             data: {
-		data: canvas[0].toDataURL(),
-		id: gyazoID
+		data: imagedata,
+		id: gyazoUserID
             },
             success: function(data, textStatus, jqXHR ) {
 		location.href = data;
